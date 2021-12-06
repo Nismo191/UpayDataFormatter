@@ -1,6 +1,7 @@
 # Import Standard Libraries
 import sys
 sys.path.append("..")
+import tkinter as tk
 
 # Import Additional Libraries
 import pandas as pd
@@ -154,11 +155,10 @@ if __name__ == "__main__":
                 write_range[i+1][0].value = record.sum_transaction_charge
                 write_range[i+2][0].value = record.sum_standard_charge
                 write_range[i+3][0].value = record.sum_service_charge
-                if record.scheme != "Amex":
-                    total += record.sum_transaction_value
+                total += record.sum_transaction_value + record.sum_transaction_charge + record.sum_standard_charge + record.sum_service_charge
         i += 1
 
-    total_range.value = total
+    total_range.value = total*-1
 
     # Write the template to the output file
     template.save('output/output.xlsx')
