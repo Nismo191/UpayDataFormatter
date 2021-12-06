@@ -1,11 +1,13 @@
 # Import Standard Libraries
+import sys
+sys.path.append("..")
 
 # Import Additional Libraries
 import pandas as pd
 from openpyxl import load_workbook
 
 # Import Custom Libraries
-import BenLogic.file_operations as fo
+from BenLogic import file_operations as fo
 import key_data as data
 
 # Initialize Variables
@@ -96,7 +98,7 @@ if __name__ == "__main__":
                 sum_transaction_charge += df.query('Site == "'+site+'" & Unit == "'+unit+'" & Scheme != "American Express"')['Standard Charge Value'].sum()
                 sum_standard_charge += df.query('Site == "'+site+'" & Unit == "'+unit+'" & Scheme != "American Express"')['Service Charge Value'].sum()
                 sum_service_charge = (sum_standard_charge/100)*20
-                sum_transaction_value = float("{:.2f}".format(sum_transaction_value))
+                sum_transaction_value = float("{:.2f}".format(sum_transaction_value*-1))
                 sum_transaction_charge = float("{:.2f}".format(sum_transaction_charge))
                 sum_standard_charge = float("{:.2f}".format(sum_standard_charge))
                 sum_service_charge = float("{:.2f}".format(sum_service_charge))
@@ -112,7 +114,7 @@ if __name__ == "__main__":
                 sum_transaction_charge += (df.query('Site == "'+site+'" & Unit == "'+unit+'" & Scheme == "American Express"')['Standard Charge Value'].sum())
                 sum_standard_charge += df.query('Site == "'+site+'" & Unit == "'+unit+'" & Scheme == "American Express"')['Service Charge Value'].sum()
                 sum_service_charge = (sum_standard_charge/100)*20
-                sum_transaction_value = float("{:.2f}".format(sum_transaction_value))
+                sum_transaction_value = float("{:.2f}".format(sum_transaction_value*-1))
                 sum_transaction_charge = float("{:.2f}".format(sum_transaction_charge))
                 sum_standard_charge = float("{:.2f}".format(sum_standard_charge))
                 sum_service_charge = float("{:.2f}".format(sum_service_charge))
@@ -122,6 +124,7 @@ if __name__ == "__main__":
     ws = template.active
     read_range = ws['F10':'F146']
     write_range = ws['C10':'C146']
+    total_range = ws['C10']
 
     #  Go through each record and amend site/unit names to match the template
     ###### Should switch this to map an ID to the site/unit name and then use that to get the correct row in the template ######
@@ -142,6 +145,7 @@ if __name__ == "__main__":
     # Loop through the read range and then the totals array, where the Site/Unit/Scheme match, write the values to the write range for the current index
     # increment the index for the three additional vars
     i=0
+    total = 0
     for cell in read_range:
         for record in totals:
             # print(cell[0].value, record.site + " " + record.unit)
@@ -150,7 +154,11 @@ if __name__ == "__main__":
                 write_range[i+1][0].value = record.sum_transaction_charge
                 write_range[i+2][0].value = record.sum_standard_charge
                 write_range[i+3][0].value = record.sum_service_charge
+                if record.scheme != "Amex":
+                    total += record.sum_transaction_value
         i += 1
+
+    total_range.value = total
 
     # Write the template to the output file
     template.save('output/output.xlsx')
