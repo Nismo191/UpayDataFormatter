@@ -47,9 +47,27 @@ class Unit():
     
 
 
-if __name__ == "__main__":
+def main(data_url, template_url):
+
+    import key_data as data
+
+    # Initialize Variables
+    sites_array = data.sites_array
+    units_array = data.units_array
+    card_rates = data.card_rates
+    site = ""
+    unit = ""
+    rate = "0"
+    sum_transaction_value = 0
+    sum_transaction_charge = 0
+    sum_standard_charge = 0
+    sum_service_charge = 0
+    df_temp = []
+    totals = []
+
     # Load data and template file, data is returned as a dataframe, template is returned as a openpyxl workbook
-    data, template = load_files('Input/Upay example- 1.xlsx', 'Input/1800 Upay Journal - Copy.xlsx')
+    # data, template = load_files('Input/Upay example- 1.xlsx', 'Input/1800 Upay Journal - Copy.xlsx')
+    data, template = load_files(data_url, template_url)
 
     # Remove unneeded columns (anything called 'Unnamed')
     for col in data.columns:

@@ -1,4 +1,6 @@
 Input/
 Output/
+build/
+dist/
 
 /key_data.py
